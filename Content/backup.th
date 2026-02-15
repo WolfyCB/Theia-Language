@@ -1,0 +1,15 @@
+int x = 10
+uint y = 100
+char abc = 'a'
+uchar xyz = 'z'
+float pi = 3.14
+double wow = 1.2345678
+str word = "biurifu"
+bool button = true
+
+if else elif switch for do label goto
+
+fn int main()
+	printfln("Hello World!")
+	return 0
+end

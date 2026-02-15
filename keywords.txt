@@ -1,0 +1,109 @@
+##keyword -> c/c++ equivalent : example
+
+#data types
+i32) int -> signed int
+u32) uint -> unsigned int
+i16/u16) short : short uint -> short : short unsigned int
+i64/u64) long : long uint -> long : long unsigned int
+i8) char : char
+u8) uchar : unsigned char
+f32/f64) float : long float -> long float
+string) str -> char* / std::String
+boolean) bool -> unsigned char / bool
+infered) let -> <i32, i64, str, char, bool, f32, f64>
+array) <type> <name>[<cap>] -> <type> <name>[<cap>];
+
+const <type> <name> = <value>: const int x = 10 -> const <type> <name> = <value>;
+static <type> <name>: static int x = 10 -> static <type> <name>;
+
+
+#control flow
+if( <cond> ) <block> end -> if( <cond> ){ <block> }
+elif( <cond> ) <block> end -> else if( <cond> ){ <block> }
+else <block> end -> else { <block> }
+
+for( <types decl> ; <conds> ; <bin exp> ) <block> end -> for( <types decl> ; <conds> ; <bin exp> ){ <block> }
+while( <conds> ) <block> end -> while( <conds> ){ <block> }
+do <block> while( <conds> ) -> do{ <block> }while(<conds>)
+switch( <value> ) <case( <xval> ) <block>> <default <block>> end -> switch( <value> ){ <case <xval>: <block>> <default: <block>> }
+goto <label> -> goto <label>;
+label <name> -> <name>:
+
+
+#functions and objects
+template<T>
+fn <data> <name>( <args> ) <block> end -> <data> <name>( <args> ){ <block> }
+object <name> <elements> end -> struct <name>{ <elements> };
+object <name> <elements> <construct() or destruct()> end -> class <name>{ <elements> <construct or destruct };
+object <name> ':' <objects> <elements> end -> class <name> : <access> <class> {};
+
+
+#libs and modules
+import <module> : import std/io -> #include <header> : #include <stdio.h>
+import <path string> : import "../myLib/math" -> #include "../myLib/mat.h"
+export {<variables and functions list>} -> <header file.h> + <source file.c>
+
+std/
+	in 		#input
+	out 	#output
+	io 		#input and output
+	file	#file manipulation
+	math	#math funcs
+	vec		#vectors
+	arr 	#arrays
+	stack 	#stacking
+	queue 	#queue
+	mat 	#matrices
+	map		#map
+	umap	#unordered map
+	set		#set
+	uset	#unordered set
+	memory 	#smart pointers
+	locale 	#international local
+	time	#time manipulation
+	os		#Operational System functions
+
+	
+#tokens
+UNKNOWN = 0,
+IDENT,
+VALUE, 
+DATA_TYPE, 
+OPERATOR,
+PUNCT,
+KEYWORD,
+
+
+
+let x = 10 #infered value -> 10 is an int
+fn y() end #returnless/void return type function
+
+fn add(a, b)
+ ret a + b
+end
+
+#[ 
+Syntax Error: 
+	line: 82
+	'add' is a *no return function*
+	suggestions: 
+		fn int add(a, b)
+		   +++
+	   	ret a + b
+		---------
+]#
+
+x int = 10
+
+#[
+Syntax Error:
+	Line: 96
+	type 'int' and variable 'x' position swapped
+	suggestions:
+		int x = 10
+		*****
+]#
+
+
+int x = 10
+fn int y() end
