@@ -11,7 +11,7 @@ extern "C" {
 #include "tools.h"
 
 typedef struct {
-    size_t cur, next;
+    size_t cur;
     unsigned long line, col;
     String buffer;
     unsigned long codeLen;

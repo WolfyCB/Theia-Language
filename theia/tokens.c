@@ -4,7 +4,7 @@
 
 
 int cmptoken(const Token a, const Token b){
-    return a.token == b.token && a.subToken == b.subToken;
+    return a.Class == b.Class && a.type == b.type;
 }
 
 TokenVec newvec(){
@@ -39,96 +39,96 @@ void vecadd(TokenVec* vec, const Token token){
 
 
 
-Token keywords[] = {
-    {.data = "true",	.token = VALUE,         .subToken = TRUE_BOOL	},
-    {.data = "false",	.token = VALUE,         .subToken = FALSE_BOOL	},
+TokenElement keywords[] = {
+    {.data = "true",	.Class = VALUE,         .type = TRUE_BOOL	},
+    {.data = "false",	.Class = VALUE,         .type = FALSE_BOOL	},
 
     //data types
-    {.data = "void",        .token = DATA_TYPE,	.subToken = VOID		},
-    {.data = "let",         .token = DATA_TYPE,	.subToken = LET			},
-    {.data = "char",        .token = DATA_TYPE,	.subToken = CHAR		},
-    {.data = "uchar",       .token = DATA_TYPE,	.subToken = UCHAR		},
-    {.data = "str",         .token = DATA_TYPE,	.subToken = STR			},
-    {.data = "bool",        .token = DATA_TYPE,	.subToken = BOOL		},
-    {.data = "int",         .token = DATA_TYPE,	.subToken = INT			},
-    {.data = "uint",        .token = DATA_TYPE,	.subToken = UINT		},
-    {.data = "float",       .token = DATA_TYPE,	.subToken = FLOAT		},
-    {.data = "double",      .token = DATA_TYPE,	.subToken = DOUBLE		},
-    {.data = "enum",        .token = DATA_TYPE,	.subToken = ENUM		},
-    
-    {.data = "short",       .token = DATA_TYPE,	.subToken = SHORT		},
-    {.data = "long",        .token = DATA_TYPE,	.subToken = LONG		},
+    {.data = "void",        .Class = DATA_TYPE,	.type = VOID		},
+    {.data = "let",         .Class = DATA_TYPE,	.type = LET			},
+    {.data = "char",        .Class = DATA_TYPE,	.type = CHAR		},
+    {.data = "uchar",       .Class = DATA_TYPE,	.type = UCHAR		},
+    {.data = "str",         .Class = DATA_TYPE,	.type = STR			},
+    {.data = "bool",        .Class = DATA_TYPE,	.type = BOOL		},
+    {.data = "int",         .Class = DATA_TYPE,	.type = INT			},
+    {.data = "uint",        .Class = DATA_TYPE,	.type = UINT		},
+    {.data = "float",       .Class = DATA_TYPE,	.type = FLOAT		},
+    {.data = "double",      .Class = DATA_TYPE,	.type = DOUBLE		},
+    {.data = "enum",        .Class = DATA_TYPE,	.type = ENUM		},
+    {.data = "short",       .Class = DATA_TYPE,	.type = SHORT		},
+    {.data = "long",        .Class = DATA_TYPE,	.type = LONG		},
     //control keywords
-    {.data = "end",         .token = CONTROL,   .subToken = END 		},
-    {.data = "if",          .token = CONTROL,   .subToken = IF 			},
-    {.data = "elif",        .token = CONTROL,   .subToken = ELIF 		},
-    {.data = "else",        .token = CONTROL,   .subToken = ELSE 		},
-    {.data = "for",         .token = CONTROL,   .subToken = FOR 		},
-    {.data = "while",       .token = CONTROL,   .subToken = WHILE 		},
-    {.data = "do",       	.token = CONTROL,   .subToken = DO 		},
-    {.data = "switch",      .token = CONTROL,   .subToken = SWITCH 		},
-    {.data = "return",      .token = CONTROL,   .subToken = RETURN 		},
-    {.data = "continue",    .token = CONTROL,   .subToken = CONTINUE 	        },
-    {.data = "break",       .token = CONTROL,   .subToken = BREAK 		},
-
-    {.data = "fn",          .token = KEYWORD,	.subToken = FN 			},
-    {.data = "object",      .token = KEYWORD, 	.subToken = OBJECT 		},
-    {.data = "construct",   .token = KEYWORD,   .subToken = CONSTRUCT 	        },
-    {.data = "destruct",    .token = KEYWORD,   .subToken = DESTRUCT 	        },
-    {.data = "template",    .token = KEYWORD,	.subToken = TEMPLATE 	        },
-    {.data = "import",      .token = KEYWORD,	.subToken = IMPORT 		},
-    {.data = "export",      .token = KEYWORD,	.subToken = EXPORT 		},
+    {.data = "end",         .Class = CONTROL,   .type = END 		},
+    {.data = "if",          .Class = CONTROL,   .type = IF 			},
+    {.data = "elif",        .Class = CONTROL,   .type = ELIF 		},
+    {.data = "else",        .Class = CONTROL,   .type = ELSE 		},
+    {.data = "for",         .Class = CONTROL,   .type = FOR 		},
+    {.data = "while",       .Class = CONTROL,   .type = WHILE 		},
+    {.data = "do",       	.Class = CONTROL,   .type = DO 		},
+    {.data = "switch",      .Class = CONTROL,   .type = SWITCH 		},
+    {.data = "return",      .Class = CONTROL,   .type = RETURN 		},
+    {.data = "continue",    .Class = CONTROL,   .type = CONTINUE 	        },
+    {.data = "break",       .Class = CONTROL,   .type = BREAK 		},
+	//keywords
+    {.data = "fn",          .Class = KEYWORD,	.type = FN 			},
+    {.data = "object",      .Class = KEYWORD, 	.type = OBJECT 		},
+    {.data = "construct",   .Class = KEYWORD,   .type = CONSTRUCT 	        },
+    {.data = "destruct",    .Class = KEYWORD,   .type = DESTRUCT 	        },
+    {.data = "template",    .Class = KEYWORD,	.type = TEMPLATE 	        },
+    {.data = "import",      .Class = KEYWORD,	.type = IMPORT 		},
+    {.data = "export",      .Class = KEYWORD,	.type = EXPORT 		},
 	
     //Logical operators
-    {.data = "not",     .token = LOGIC,         .subToken = LOGIC_NOT   },
-    {.data = "and",     .token = LOGIC,         .subToken = LOGIC_AND   },
-    {.data = "or",      .token = LOGIC,         .subToken = LOGIC_OR    },
+    {.data = "not",     .Class = LOGIC,         .type = LOGIC_NOT   },
+    {.data = "and",     .Class = LOGIC,         .type = LOGIC_AND   },
+    {.data = "or",      .Class = LOGIC,         .type = LOGIC_OR    },
     
-    {.data = NULL,      .token = UNKNOWN,       .subToken = ERR	        } //end
+    {.data = NULL,      .Class = UNKNOWN,       .type = ERR	        } //end
 };
 
-Token puncts[] = {
+TokenElement puncts[] = {
     // punct operators
-    {.data = "(",  .token = PUNCT,      .subToken = L_PAREN		},
-    {.data = ")",  .token = PUNCT,      .subToken = R_PAREN 	},
-    {.data = "[",  .token = PUNCT,      .subToken = L_BRACKET	},
-    {.data = "]",  .token = PUNCT,      .subToken = R_BRACKET	},
-    {.data = "{",  .token = PUNCT,      .subToken = L_KEY	   	},
-    {.data = "}",  .token = PUNCT,      .subToken = R_KEY		},
-    {.data = ".",  .token = PUNCT,      .subToken = DOT   		},
-    {.data = ",",  .token = PUNCT,      .subToken = COMMA  	 	},
-    {.data = ";",  .token = PUNCT,      .subToken = SEMICOLON	},
-    {.data = ":",  .token = PUNCT,      .subToken = COLON		},
+    {.data = "(",  .Class = PUNCT,      .type = L_PAREN		},
+    {.data = ")",  .Class = PUNCT,      .type = R_PAREN 	},
+    {.data = "[",  .Class = PUNCT,      .type = L_BRACKET	},
+    {.data = "]",  .Class = PUNCT,      .type = R_BRACKET	},
+    {.data = "{",  .Class = PUNCT,      .type = L_KEY	   	},
+    {.data = "}",  .Class = PUNCT,      .type = R_KEY		},
+    {.data = ".",  .Class = PUNCT,      .type = DOT   		},
+    {.data = ",",  .Class = PUNCT,      .type = COMMA  	 	},
+    {.data = ";",  .Class = PUNCT,      .type = SEMICOLON	},
+    {.data = ":",  .Class = PUNCT,      .type = COLON		},
+    {.data = "?",  .Class = PUNCT,      .type = QUESTION	},
 	
-    {.data = NULL, .token = UNKNOWN,    .subToken = ERR	} //end
+    {.data = NULL, .Class = UNKNOWN,    .type = ERR	} //end
 };
-Token operators[] = {
+TokenElement operators[] = {
     //unary operators
-    {.data = "++", .token = UNARY, .subToken = UNARY_PLUS  },
-    {.data = "--", .token = UNARY, .subToken = UNARY_MINUS },
+    {.data = "++", .Class = UNARY, .type = UNARY_PLUS  },
+    {.data = "--", .Class = UNARY, .type = UNARY_MINUS },
 	
     //arithmetics operators
-    {.data = "+", .token = ARITH, .subToken = SUM 	},
-    {.data = "-", .token = ARITH, .subToken = SUB 	},
-    {.data = "*", .token = ARITH, .subToken = MULT 	},
-    {.data = "/", .token = ARITH, .subToken = DIV 	},
-    {.data = "%", .token = ARITH, .subToken = MOD 	},
+    {.data = "+", .Class = ARITH, .type = SUM 	},
+    {.data = "-", .Class = ARITH, .type = SUB 	},
+    {.data = "*", .Class = ARITH, .type = MULT 	},
+    {.data = "/", .Class = ARITH, .type = DIV 	},
+    {.data = "%", .Class = ARITH, .type = MOD 	},
 
     //rational operators
-    {.data = "==", .token = RATIONAL, .subToken = EQU	},
-    {.data = "!=", .token = RATIONAL, .subToken = NEQ	},
-    {.data = ">",  .token = RATIONAL, .subToken = GRT	},
-    {.data = ">=", .token = RATIONAL, .subToken = GRE	},
-    {.data = "<",  .token = RATIONAL, .subToken = LST	},
-    {.data = "<=", .token = RATIONAL, .subToken = LSE	},
+    {.data = "==", .Class = RATIONAL, .type = EQU	},
+    {.data = "!=", .Class = RATIONAL, .type = NEQ	},
+    {.data = ">",  .Class = RATIONAL, .type = GRT	},
+    {.data = ">=", .Class = RATIONAL, .type = GRE	},
+    {.data = "<",  .Class = RATIONAL, .type = LST	},
+    {.data = "<=", .Class = RATIONAL, .type = LSE	},
 
     //unary operators
-    {.data = "=",  .token = ASSIGN, .subToken = EQUAL    	},
-    {.data = "+=", .token = ASSIGN, .subToken = SUM_EQUAL	},
-    {.data = "-=", .token = ASSIGN, .subToken = SUB_EQUAL	},
-    {.data = "*=", .token = ASSIGN, .subToken = MULT_EQUAL	},
-    {.data = "/=", .token = ASSIGN, .subToken = DIV_EQUAL	},
-    {.data = "%=", .token = ASSIGN, .subToken = MOD_EQUAL	},
+    {.data = "=",  .Class = ASSIGN, .type = EQUAL    	},
+    {.data = "+=", .Class = ASSIGN, .type = SUM_EQUAL	},
+    {.data = "-=", .Class = ASSIGN, .type = SUB_EQUAL	},
+    {.data = "*=", .Class = ASSIGN, .type = MULT_EQUAL	},
+    {.data = "/=", .Class = ASSIGN, .type = DIV_EQUAL	},
+    {.data = "%=", .Class = ASSIGN, .type = MOD_EQUAL	},
 	
-    {.data = NULL, .token = UNKNOWN, .subToken = ERR	} //end	
+    {.data = NULL, .Class = UNKNOWN, .type = ERR	} //end	
 };

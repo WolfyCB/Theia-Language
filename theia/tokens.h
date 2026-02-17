@@ -9,7 +9,7 @@ typedef enum {
     NIL=0, INTEGER, FLOATING, STRING, CHARACTER, TRUE_BOOL, FALSE_BOOL,
     VOID=0, LET, CHAR, UCHAR, STR, BOOL, INT, UINT, FLOAT, DOUBLE, ENUM, SHORT, LONG,
     END=0, IF, ELIF, ELSE, FOR, WHILE, DO, SWITCH, RETURN, CONTINUE, BREAK,
-    L_PAREN = 0, R_PAREN, L_BRACKET, R_BRACKET, L_KEY, R_KEY, DOT, COMMA, SEMICOLON, COLON,
+    L_PAREN = 0, R_PAREN, L_BRACKET, R_BRACKET, L_KEY, R_KEY, DOT, COMMA, SEMICOLON, COLON, QUESTION,
     UNARY_PLUS = 0, UNARY_MINUS,
     SUM = 0, SUB, MULT, DIV, MOD,
     EQU = 0, NEQ, GRT, GRE, LST, LSE,
@@ -18,7 +18,7 @@ typedef enum {
     VAR_ID = 0, FN_ID, OBJECT_ID, MODULE_ID,
     FN = 0, OBJECT, CONSTRUCT, DESTRUCT, TEMPLATE, IMPORT, EXPORT ,
     ERR = -1,
-} SubToken_t;
+} TokenType;
 typedef enum {
     UNKNOWN = 0,
     IDENT, //1
@@ -26,12 +26,29 @@ typedef enum {
     LOGIC, UNARY, RATIONAL, ARITH, ASSIGN, PUNCT, //4 5 6 7 8 9
     CONTROL, KEYWORD, //10 11
     END_OF_FILE //12
-} Token_t;
+} TokenClass;
 
 typedef struct {
-    char* data;
-    Token_t token;
-    SubToken_t subToken;
+	const char* data;
+	TokenClass Class;
+	TokenType type;
+} TokenElement;
+
+typedef union {
+	signed char 			c;		//char
+	unsigned char 			uc;		//uchar
+	signed long long int	i;		//int
+	unsigned long long int 	u;		//uint
+	float 					f;		//float
+	double 					d;		//double
+	char* 					str;	//string
+	int						b;		//boolean
+} TokenValue;
+
+typedef struct {
+	TokenValue 	data;
+	TokenClass 	Class;
+    TokenType 	type;
     unsigned int col, line;
 } Token;
 
@@ -45,9 +62,9 @@ extern TokenVec newvec();
 extern void vecdel(TokenVec*);
 extern void vecadd(TokenVec*, const Token);
 
-extern Token keywords[];
-extern Token puncts[];
-extern Token operators[];
+extern TokenElement keywords[];
+extern TokenElement puncts[];
+extern TokenElement operators[];
 
 #ifdef __cplusplus
 }
