@@ -9,7 +9,7 @@
 #include <float.h>
 
 void theia_error(const char* msg){
-    fprintf(stderr, msg);
+    printf("%s\n", msg);
     exit(EXIT_FAILURE);
 }
 
@@ -26,7 +26,7 @@ Lexer lexer_init(const char* filename){
     fread(codeContent, 1, size, f);
     codeContent[size] = '\0';
     fclose(f);
-    
+    initTokens();
     return (Lexer){
         .cur = 0,
         .col = 0,
@@ -45,7 +45,7 @@ void lexer_close(Lexer* lexer){
     strdel(&lexer->buffer);
 }
 int advance(Lexer* lexer){
-    if(lexer->cur >= lexer->codeLen) return '\0';
+	if(lexer->cur >= lexer->codeLen) return '\0';
 	
     if(lexer->code[lexer->cur] == '\n'){
         lexer->col = 0;
@@ -55,12 +55,13 @@ int advance(Lexer* lexer){
     lexer->col++;
     return lexer->code[lexer->cur];
 }
-int peek(Lexer* lexer){
-    return lexer->code[lexer->cur];
+int peek(Lexer* lexer);
+int next(Lexer* lexer);
+inline int peek(Lexer* lexer){
+    return (lexer->cur >= lexer->codeLen) ? '\0' : lexer->code[lexer->cur];
 }
-int next(Lexer* lexer){
-    if(lexer->cur + 1 >= lexer->codeLen) return '\0';
-    return lexer->code[lexer->cur + 1];
+inline int next(Lexer* lexer){
+    return (lexer->cur + 1 >= lexer->codeLen) ? '\0' : lexer->code[lexer->cur + 1];
 }
 void consume(Lexer* lexer){
     strapp(&lexer->buffer, lexer->code[lexer->cur]);
@@ -73,41 +74,19 @@ void fabricToken(Lexer* lexer, const Token token){
         .line = lexer->line,
         .col = lexer->col
     });
+    //printf("%s\n", lexer->buffer.data);
     strclean(&lexer->buffer);
 }
 
 
 int isPunct(const char c){
-    return strchr("(){}[]<>.,;:", c) != NULL;
+	if(!c) return 0;
+    return strchr("(){}[].,;:?_", c) != NULL;
 }
 int isOperator(const char c){
-    return strchr("+-=/%!*&?", c) != NULL;
+	if(!c) return 0;
+    return strchr("+-/*%=!<>", c) != NULL;
 }
-
-#define GETTOKEN(array)\
-Token get_##array##_token(const String str){\
-    int i = 0;\
-    Token t = {\
-    	.Class = UNKNOWN,\
-    	.type = ERR\
-    };\
-    while(strncmp(array[i].data, str.data, str.size) != 0){\
-		if(array[i].Class == UNKNOWN){\
-			t.data.str = strdup(array[i].data);\
-			break;\
-		}\
-		i++;\
-    }\
-    if(array[i].Class){\
-    	t.Class = array[i].Class;\
-    	t.type = array[i].type;\
-    }\
-    return t;\
-}
-GETTOKEN(keywords);
-GETTOKEN(puncts);
-GETTOKEN(operators);
-#undef GETTOKEN
 
 void typeStrConvert(Token* t, const char* str){
 	char* endptr;
@@ -122,10 +101,6 @@ void typeStrConvert(Token* t, const char* str){
 	}
 	if(t->type == FLOATING){
 		double num = strtod(str, &endptr);
-		if(num > FLT_MAX || num < FLT_MIN){
-			t->data.d = num;
-			return;
-		}
 		t->data.f = num;
 		return;
 	}
@@ -134,59 +109,56 @@ void typeStrConvert(Token* t, const char* str){
 
 int isIdentStart(Lexer** lexer){
 	int cur = peek(*lexer);
-    return isalpha(cur) || cur == '_';
+	return isalpha(cur) || cur == '_';
 }
 void isIdent(Lexer** lexer){
-	Token t = {
-		.Class = IDENT,
-		.type = VAR_ID
-	};
 	int cur = peek(*lexer);
-	while(isalnum(cur) || cur == '_' ){
+	while(isalnum(cur) || cur == '_'){
 		consume(*lexer);
 		cur = advance(*lexer);
 	}
-	Token key = get_keywords_token((*lexer)->buffer);
-	if(key.Class != UNKNOWN){
-		t.Class = key.Class;
-		t.type = key.type;
+	if((*lexer)->buffer.size == 1 && (*lexer)->buffer.data[0] == '_'){
+			fabricToken(*lexer, getPunctToken("_", 1));
+			return;
+		}
+	
+	Token t = getKeywordToken((*lexer)->buffer.data, (*lexer)->buffer.size);
+	switch(t.type){
+		case BOOL_TRUE: t.data.b = 1; break;
+		case BOOL_FALSE: t.data.b = 0; break;
+		default: break;
 	}
-	t.data.str = key.data.str;
-	if(key.type == TRUE_BOOL) t.data.b = 1;
-	if(key.type == FALSE_BOOL) t.data.b = 0;
 	fabricToken(*lexer, t);
 }
 
 void getOperator(Lexer** lexer){
 	consume(*lexer);
-	if(next(*lexer) != '\0' && isOperator(next(*lexer))){
+	if(isOperator(next(*lexer))){
 		advance(*lexer);
 		consume(*lexer);
 	}
-	advance(*lexer);
+	Token op = getOperatorToken((*lexer)->buffer.data, (*lexer)->buffer.size);
 	
-	Token key = get_operators_token((*lexer)->buffer);
-	fabricToken(*lexer, key);
+	fabricToken(*lexer, op);
+	advance(*lexer);
 }
 
 int isNumberStart(Lexer** lexer){
 	int nextDigit = isdigit(next(*lexer)); 
 	int cur = peek(*lexer);
-	return isdigit(cur) || (cur == '-' && nextDigit) || (cur == '.' && nextDigit);
+	return isdigit(cur) || (cur == '.' && nextDigit);
 }
 void isNumber(Lexer** lexer){
-	consume(*lexer);
-	advance(*lexer);
 	char isFloat = 0;
 	char c = peek(*lexer);
-	while(isdigit(c) || c == '.'){
-		if(peek(*lexer) == '.') {
+	do {
+		if(c == '.') {
 			if(isFloat) break;
 			isFloat = 1;
 		}
 		consume(*lexer);
 		c = advance(*lexer);
-	}
+	} while(isdigit(c) || c == '.');
 	Token t = {
 		.Class = VALUE,
 	};
@@ -271,17 +243,21 @@ void ignoreMultiline(Lexer** lexer){
 
 
 void tokenize(Lexer* lexer) {
-	while(peek(lexer) != '\0'){
+	int c = peek(lexer);
+	while(c){
+	if(lexer->cur >= lexer->codeLen) break;
+	c = peek(lexer);
 	// ignore whitespaces
-	while(isspace(peek(lexer)))
-		advance(lexer);
+	while(isspace(c) && c != '\0'){
+		c = advance(lexer);
+	}
     
 	// comments
-	if(isCommentMultiline(&lexer)){
+	if(c == '#' && next(lexer) == '['){
 	    ignoreMultiline(&lexer);
 	    continue;
 	}
-	if(isCommentLine(&lexer)){
+	if(c == '#'){
 		ignoreLine(&lexer);
 		continue;
 	}
@@ -293,38 +269,41 @@ void tokenize(Lexer* lexer) {
 	}
         
 	//char
-	if(peek(lexer) == '\''){
+	if(c == '\''){
 	    isChar(&lexer);
 	    continue;
 	}
 
 	//string
-	if(peek(lexer) == '"'){
+	if(c == '"'){
 	    isString(&lexer);
 	    continue;
 	}
-						
+	
         //numbers
         if(isNumberStart(&lexer)){
 	    isNumber(&lexer);
             continue;
         }
-	if(isPunct(peek(lexer))){
-	    consume(lexer);
-	    Token key = get_puncts_token(lexer->buffer);
-	    fabricToken(lexer, (Token){
-		.data.c = 0,
-		.Class = PUNCT,
-		.type = key.type
-	    });
+	if(isPunct(c)){
+		consume(lexer);
 	    advance(lexer);
+		if(c == '.' && peek(lexer)=='.'){
+			consume(lexer);
+	    	advance(lexer);
+	    	if(peek(lexer) == '=')
+				consume(lexer);
+		}
+		fabricToken(lexer, getPunctToken(lexer->buffer.data, lexer->buffer.size));
+    	advance(lexer);
+		
 	    continue;
 	}
-	if(isOperator(peek(lexer))){
+	if(isOperator(c)){
 	    getOperator(&lexer);
 	    continue;
 	}
-	advance(lexer);
+	break;
     }
     fabricToken(lexer, (Token){
         .data.b = 0,

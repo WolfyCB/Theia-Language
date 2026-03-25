@@ -1,5 +1,5 @@
-#ifndef THEIA_STR_H
-#define THEIA_STR_H
+#ifndef SPHEN_STR_H
+#define SPHEN_STR_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,4 +1,4 @@
-#include "tools.h"
+#include "str.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,7 +17,7 @@ void strapp(String* str, const int c){
         exit(EXIT_FAILURE);
     }
     if(str->size+1 >= str->cap){
-        str->cap *= 2;
+        str->cap += 128;
         char* tmp = (char*)realloc(str->data, str->cap);
         if(!tmp) {
             printf("String memory allocation error\n");

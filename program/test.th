@@ -1,0 +1,54 @@
+import std/io
+import std/vec
+
+def EntityId:ulong
+
+
+
+# this is a comment
+#[
+	multiples
+	comments
+	wooow
+]#
+
+object Person:
+	let name:str
+	let age:uint
+	let size:uint
+	
+	construct(const n:str = "No Name", const a:uint = 0,  const s:uint = 0): #object Person becomes a class
+		self.name = n
+		self.age = a
+		self.size = s
+	end
+end
+
+fn add <T>(const a:T, const b:T) : T
+	a + b
+end
+
+fn Main()
+	std:println("Hello world!")
+
+	const x:int, a, b:(str, EntityId) = 10, 5, ("hayo", 2)
+	let sum:int = add<int>(x, y)
+
+	if sum >= 15 :
+		std:println($"sum is >= 15 : {sum}")
+	else:
+		std:println($"sum is < 15 : {sum}")
+	end
+
+	peoples:std:Vec<Person>()
+	
+	peoples.PushBack(Person("George", 20, 175))	
+	peoples.PushBack(Person("Marie", 18, 162))	
+	peoples.PushBack(Person("Markus", 25, 190))
+
+	for p:Person in peoples:
+		std:println($"Name: ${p.name}")
+		std:println($"Age: ${p.age}")
+		std:println($"Size: ${p.size}")
+	end
+end
