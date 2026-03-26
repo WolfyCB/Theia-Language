@@ -12,14 +12,14 @@ String newstr(const char* data){
     };
 }
 void strapp(String* str, const int c){
-    if(str == NULL){
-        printf("String are null\n");
+    if(str == NULL || str->data == NULL){
+        printf("String is null or uninitialized\n");
         exit(EXIT_FAILURE);
     }
-    if(str->size+1 >= str->cap){
+    if(str->size + 1 >= str->cap){
         str->cap += 128;
         char* tmp = (char*)realloc(str->data, str->cap);
-        if(!tmp) {
+        if(!tmp){
             printf("String memory allocation error\n");
             exit(EXIT_FAILURE);
         }
@@ -29,16 +29,16 @@ void strapp(String* str, const int c){
     str->data[str->size] = '\0';
 }
 void strundo(String* str){
-    if(!str->size) return;
+    if(str == NULL || str->data == NULL || str->size == 0) return;
     str->data[--str->size] = '\0';
 }
-
 void strclean(String* str){
+    if(str == NULL || str->data == NULL) return;
     str->size = 0;
     str->data[0] = '\0';
 }
-
 void strdel(String* str){
+    if(str == NULL) return;
     free(str->data);
     str->data = NULL;
     str->size = 0;
