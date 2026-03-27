@@ -136,17 +136,17 @@ let (q, r) = divide_resto(10, 3)   # desestruturação
 ---
 
 ## Tipos primitivos
-- **int:**	             Inteiro com sinal (64 bits)
-- **uint:**	             Inteiro sem sinal (64 bits)
-- **float:**	         Ponto flutuante (64 bits)
-- **double:**	         Sinônimo de float
+- **int:**	             Inteiro com sinal (32 bits)
+- **uint:**	             Inteiro sem sinal (32 bits)
+- **float:**	         Ponto flutuante (32 bits)
+- **double:**	         Sinônimo de float (64 bits)
 - **char:**	             Caractere (8 bits)
 - **uchar:**	         Caractere sem sinal
 - **bool:**	             Booleano (true/false)
 - **str:**	             Sequência de caracteres (imutável)
 - **short / ushort:**	 Inteiros de 16 bits
-- **long / ulong:**	     Inteiros de 64 bits (sinônimos)
-- **size / usize:**	     Tamanhos (mesmo que uint/int)
+- **long / ulong:**	     Inteiros de 64 bits
+- **size / usize:**	     Tamanhos (4 bytes em sistmeas 32 bits e 8 bytes em sistemas 64 bits)
 
 ---
 
